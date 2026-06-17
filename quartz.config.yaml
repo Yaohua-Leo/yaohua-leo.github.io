@@ -204,10 +204,12 @@ plugins:
         category: General
         categoryId: DIC_kwDOS9RQss4C_VAn
         mapping: pathname
-        strict: "0"
-        reactionsEnabled: "1"
+        strict: false
+        reactionsEnabled: true
         inputPosition: bottom
-        theme: preferred_color_scheme
+        themeUrl: https://giscus.app/themes
+        lightTheme: light
+        darkTheme: dark
         lang: en
     layout:
       position: afterBody
