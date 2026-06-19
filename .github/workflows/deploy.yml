@@ -51,8 +51,14 @@ jobs:
       - name: Install Quartz plugins
         run: node ./quartz/bootstrap-cli.mjs plugin install
 
+      - name: Generate Maoxuan resource index
+        run: npm run maoxuan:content-index
+
       - name: Build Quartz
         run: node ./quartz/bootstrap-cli.mjs build
+
+      - name: Publish Maoxuan raw Markdown resources
+        run: npm run maoxuan:public
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
