@@ -1,13 +1,11 @@
-import { copyFile, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises"
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const resourceRoot = path.join(root, "content", "notes", "maoxuan", "resource")
-const resourceSrc = path.join(resourceRoot, "src")
-const attributionFile = path.join(resourceRoot, "ATTRIBUTION.md")
 const contentIndexFile = path.join(root, "content", "notes", "maoxuan", "notes-maoxuan-resourse.md")
-const publicResourceRoot = path.join(root, "public", "notes", "maoxuan", "resource")
+const resourceIndexFile = path.join(resourceRoot, "index.md")
 
 const sourceRepo = "https://github.com/weiyinfu/MaoZeDongAnthology"
 const sourceCommit = "f23ff5c48d976561f888c6ce8c594725d5670e38"
@@ -19,14 +17,6 @@ function encodePathSegmented(relativePath) {
     .join("/")
 }
 
-function htmlEscape(value) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-}
-
 async function listMarkdownFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true })
   const files = []
@@ -36,7 +26,7 @@ async function listMarkdownFiles(dir) {
     if (entry.isDirectory()) {
       const nested = await listMarkdownFiles(fullPath)
       files.push(...nested.map((file) => path.join(entry.name, file)))
-    } else if (entry.isFile() && entry.name.endsWith(".md")) {
+    } else if (entry.isFile() && entry.name.endsWith(".md") && entry.name !== "index.md") {
       files.push(entry.name)
     }
   }
@@ -44,27 +34,103 @@ async function listMarkdownFiles(dir) {
   return files.sort((a, b) => a.localeCompare(b, "zh-Hans-CN", { numeric: true }))
 }
 
-function publicHref(relativePath) {
-  return `/notes/maoxuan/resource/${encodePathSegmented(relativePath.replaceAll("\\", "/"))}`
+function resourceMarkdownHref(relativePath) {
+  return `resource/${encodePathSegmented(relativePath.replaceAll("\\", "/"))}`
 }
 
 async function assertResourcesExist() {
-  const [srcStats, attributionStats] = await Promise.all([stat(resourceSrc), stat(attributionFile)])
-  if (!srcStats.isDirectory()) {
-    throw new Error(`Expected source directory: ${resourceSrc}`)
+  const resourceStats = await stat(resourceRoot)
+  if (!resourceStats.isDirectory()) {
+    throw new Error(`Expected resource directory: ${resourceRoot}`)
   }
-  if (!attributionStats.isFile()) {
-    throw new Error(`Expected attribution file: ${attributionFile}`)
+}
+
+function titleFromFile(relativePath) {
+  return path.basename(relativePath, ".md")
+}
+
+function frontmatterFor(relativePath) {
+  return `---
+title: ${JSON.stringify(titleFromFile(relativePath))}
+publish: true
+tags:
+  - maoxuan
+  - resource
+---
+
+`
+}
+
+function hasFrontmatter(content) {
+  return content.startsWith("---\n") || content.startsWith("---\r\n")
+}
+
+function ensurePublishedFrontmatter(relativePath, content) {
+  let updated = content.replace(
+    /This file is kept under `content\/notes\/maoxuan\/resource\/` as reading source material and intentionally has no `publish: true` frontmatter\./g,
+    "This file is kept under `content/notes/maoxuan/resource/` as published reading source material.",
+  )
+  updated = updated.replace(
+    /The copied Markdown files are intentionally not marked with `publish: true`, so Quartz's explicit-publish filter should keep them out of the public site unless they are deliberately reviewed and published later\./g,
+    "The copied Markdown files are deliberately marked with `publish: true` so Quartz publishes the `resource` folder and its contents in the site explorer.",
+  )
+
+  if (hasFrontmatter(updated)) {
+    return updated
   }
+
+  return `${frontmatterFor(relativePath)}${updated}`
+}
+
+async function prepareResourceFiles(files) {
+  for (const file of files) {
+    const fullPath = path.join(resourceRoot, file)
+    const content = await readFile(fullPath, "utf8")
+    const updated = ensurePublishedFrontmatter(file, content)
+    if (updated !== content) {
+      await writeFile(fullPath, updated, "utf8")
+    }
+  }
+}
+
+async function writeResourceIndex(files) {
+  const items = files
+    .map((file) => `- [${file}](${encodePathSegmented(file.replaceAll("\\", "/"))})`)
+    .join("\n")
+
+  const content = `---
+title: Maoxuan Resources
+date: 2026-06-19
+publish: true
+tags:
+  - maoxuan
+  - resource
+---
+
+# Maoxuan Resources
+
+This folder publishes the Markdown reading resources copied from [weiyinfu/MaoZeDongAnthology](${sourceRepo}) at commit \`${sourceCommit}\`.
+
+- Published Markdown page count: ${files.length}
+- Attribution: [ATTRIBUTION.md](ATTRIBUTION.md)
+
+## Published Files
+
+${items}
+`
+
+  await writeFile(resourceIndexFile, content, "utf8")
 }
 
 async function writeContentIndex() {
   await assertResourcesExist()
-  const files = await listMarkdownFiles(resourceSrc)
+  const files = await listMarkdownFiles(resourceRoot)
+  await prepareResourceFiles(files)
+  await writeResourceIndex(files)
+
   const items = files
     .map((file) => {
-      const relativePath = `src/${file.replaceAll("\\", "/")}`
-      return `- [${file}](${publicHref(relativePath)})`
+      return `- [${file}](${resourceMarkdownHref(file)})`
     })
     .join("\n")
 
@@ -79,97 +145,28 @@ tags:
 
 # notes-maoxuan-resourse
 
-This page publishes the raw Markdown reading resources copied from [weiyinfu/MaoZeDongAnthology](${sourceRepo}) at commit \`${sourceCommit}\`.
+This page indexes the Maoxuan reading resources copied from [weiyinfu/MaoZeDongAnthology](${sourceRepo}) at commit \`${sourceCommit}\`.
 
-- [ATTRIBUTION.md](${publicHref("ATTRIBUTION.md")})
-- Source file count: ${files.length}
+- Open the folder page: [resource](/notes/maoxuan/resource/index.md)
+- Attribution: [ATTRIBUTION.md](resource/ATTRIBUTION.md)
+- Published Markdown page count: ${files.length}
 
-## Source Markdown Files
+## Published Markdown Files
 
 ${items}
 `
 
   await mkdir(path.dirname(contentIndexFile), { recursive: true })
   await writeFile(contentIndexFile, content, "utf8")
-  console.log(`Wrote ${path.relative(root, contentIndexFile)} with ${files.length} resource links.`)
-}
-
-async function copyPublicResources() {
-  await assertResourcesExist()
-  const files = await listMarkdownFiles(resourceSrc)
-
-  await rm(publicResourceRoot, { recursive: true, force: true })
-  await mkdir(path.join(publicResourceRoot, "src"), { recursive: true })
-
-  await copyFile(attributionFile, path.join(publicResourceRoot, "ATTRIBUTION.md"))
-  for (const file of files) {
-    await copyFile(path.join(resourceSrc, file), path.join(publicResourceRoot, "src", file))
-  }
-
-  await writeFile(path.join(publicResourceRoot, "index.html"), renderHtmlIndex(files), "utf8")
   console.log(
-    `Copied ${files.length} Markdown files and ATTRIBUTION.md into ${path.relative(root, publicResourceRoot)}.`,
+    `Prepared ${files.length} resource pages and wrote ${path.relative(root, contentIndexFile)} plus ${path.relative(root, resourceIndexFile)}.`,
   )
 }
 
-function renderHtmlIndex(files) {
-  const links = files
-    .map((file) => {
-      const href = `src/${encodePathSegmented(file)}`
-      return `<li><a href="${href}">${htmlEscape(file)}</a></li>`
-    })
-    .join("\n")
-
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>notes-maoxuan-resourse</title>
-  <style>
-    body {
-      max-width: 960px;
-      margin: 48px auto;
-      padding: 0 24px 48px;
-      color: #221b17;
-      background: #fbf7ef;
-      font: 16px/1.65 Georgia, "Times New Roman", serif;
-    }
-
-    h1 {
-      margin-bottom: 0.25rem;
-      font-size: clamp(2rem, 4vw, 3.25rem);
-      line-height: 1.05;
-    }
-
-    .meta {
-      color: #665a50;
-      margin-bottom: 2rem;
-    }
-
-    a {
-      color: #7b241c;
-    }
-
-    li {
-      margin: 0.35rem 0;
-    }
-  </style>
-</head>
-<body>
-  <h1>notes-maoxuan-resourse</h1>
-  <p class="meta">
-    Raw Markdown reading resources copied from
-    <a href="${sourceRepo}">weiyinfu/MaoZeDongAnthology</a>
-    at commit <code>${sourceCommit}</code>.
-  </p>
-  <p><a href="ATTRIBUTION.md">ATTRIBUTION.md</a></p>
-  <ol>
-${links}
-  </ol>
-</body>
-</html>
-`
+async function copyPublicResources() {
+  console.log(
+    "Maoxuan resources are published by Quartz content pages; no public copy step is needed.",
+  )
 }
 
 const mode = process.argv[2]

@@ -57,9 +57,6 @@ jobs:
       - name: Build Quartz
         run: node ./quartz/bootstrap-cli.mjs build
 
-      - name: Publish Maoxuan raw Markdown resources
-        run: npm run maoxuan:public
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
