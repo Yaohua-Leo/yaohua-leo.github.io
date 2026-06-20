@@ -19,6 +19,7 @@
     "test": "tsx --test",
     "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1",
     "install-plugins": "npx tsx ./quartz/plugins/loader/install-plugins.ts",
+    "patch-plugins": "node ./scripts/patch-quartz-graph-plugin.mjs",
     "maoxuan:content-index": "node ./scripts/publish-maoxuan-resources.mjs --content-index",
     "prebuild": "npm run install-plugins"
   },
