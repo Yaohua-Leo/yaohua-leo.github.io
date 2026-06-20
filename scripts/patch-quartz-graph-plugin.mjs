@@ -13,7 +13,10 @@ const sourcePath = path.join(
   "scripts",
   "graph.inline.ts",
 )
-const distPath = path.join(repoRoot, ".quartz", "plugins", "graph", "dist", "index.js")
+const distPaths = [
+  path.join(repoRoot, ".quartz", "plugins", "graph", "dist", "index.js"),
+  path.join(repoRoot, ".quartz", "plugins", "graph", "dist", "components", "index.js"),
+]
 
 export function normalizeGraphSlug(rawSlug, rawBasePath = "") {
   let slug = decodeGraphSlugPart(rawSlug)
@@ -99,7 +102,9 @@ async function patchFile(filePath, patcher) {
 
 export async function patchQuartzGraphPlugin() {
   await patchFile(sourcePath, patchGraphSource)
-  await patchFile(distPath, patchGraphDist)
+  for (const distPath of distPaths) {
+    await patchFile(distPath, patchGraphDist)
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
