@@ -11,4 +11,5 @@ replit.nix
 .quartz/
 .omx/
 .playwright-mcp/
+.claudian/
 quartz/cli/tui/dist/
