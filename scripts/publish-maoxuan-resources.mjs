@@ -65,8 +65,13 @@ function hasFrontmatter(content) {
   return content.startsWith("---\n") || content.startsWith("---\r\n")
 }
 
+export function normalizeMarkdownBlankLines(content) {
+  // Quartz/CommonMark does not treat ideographic-space-only lines as Markdown blanks.
+  return content.replace(/^[\t \u3000]+$/gm, "").replace(/(?:\r?\n)+$/u, "\n")
+}
+
 function ensurePublishedFrontmatter(relativePath, content) {
-  let updated = content.replace(
+  let updated = normalizeMarkdownBlankLines(content).replace(
     /This file is kept under `content\/notes\/maoxuan\/resource\/` as reading source material and intentionally has no `publish: true` frontmatter\./g,
     "This file is kept under `content/notes/maoxuan/resource/` as published reading source material.",
   )
@@ -169,13 +174,17 @@ async function copyPublicResources() {
   )
 }
 
-const mode = process.argv[2]
+async function main(mode = process.argv[2]) {
+  if (mode === "--content-index") {
+    await writeContentIndex()
+  } else if (mode === "--public") {
+    await copyPublicResources()
+  } else {
+    console.error("Usage: node scripts/publish-maoxuan-resources.mjs --content-index|--public")
+    process.exitCode = 1
+  }
+}
 
-if (mode === "--content-index") {
-  await writeContentIndex()
-} else if (mode === "--public") {
-  await copyPublicResources()
-} else {
-  console.error("Usage: node scripts/publish-maoxuan-resources.mjs --content-index|--public")
-  process.exitCode = 1
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await main()
 }
