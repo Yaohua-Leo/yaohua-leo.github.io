@@ -1,6 +1,8 @@
 ---
 title: First Entry
-publish: true
+publish: false
+unlisted: true
+lang: en
 date: 2026-06-17
 description: Opening note for Leo's Library.
 tags:

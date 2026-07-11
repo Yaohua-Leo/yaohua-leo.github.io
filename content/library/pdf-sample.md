@@ -1,6 +1,8 @@
 ---
 title: PDF Sample
-publish: true
+publish: false
+unlisted: true
+lang: en
 description: A small local PDF asset used to verify PDF linking and embedding.
 tags:
   - library

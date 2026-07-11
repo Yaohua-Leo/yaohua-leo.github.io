@@ -53,6 +53,11 @@ function frontmatterFor(relativePath) {
   return `---
 title: ${JSON.stringify(titleFromFile(relativePath))}
 publish: true
+unlisted: true
+comments: false
+lang: zh-CN
+type: source-archive
+status: archive
 tags:
   - maoxuan
   - resource
@@ -105,14 +110,17 @@ async function writeResourceIndex(files) {
 
   const content = `---
 title: Maoxuan Resources
+description: Source-text references associated with the Mao Selected Works reading archive.
 date: 2026-06-19
 publish: true
+comments: false
+lang: zh-CN
+type: archive-index
+status: archive
 tags:
   - maoxuan
   - resource
 ---
-
-# Maoxuan Resources
 
 This folder publishes the Markdown reading resources copied from [weiyinfu/MaoZeDongAnthology](${sourceRepo}) at commit \`${sourceCommit}\`.
 
@@ -140,15 +148,19 @@ async function writeContentIndex() {
     .join("\n")
 
   const content = `---
-title: notes-maoxuan-resourse
+title: Maoxuan Resources (Legacy Index)
+description: Legacy direct index for the Mao Selected Works source-text archive.
 date: 2026-06-19
 publish: true
+unlisted: true
+comments: false
+lang: zh-CN
+type: archive-index
+status: legacy
 tags:
   - maoxuan
   - resource
 ---
-
-# notes-maoxuan-resourse
 
 This page indexes the Maoxuan reading resources copied from [weiyinfu/MaoZeDongAnthology](${sourceRepo}) at commit \`${sourceCommit}\`.
 

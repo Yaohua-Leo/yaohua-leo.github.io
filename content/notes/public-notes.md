@@ -1,6 +1,8 @@
 ---
 title: Public Notes
-publish: true
+publish: false
+unlisted: true
+lang: en
 description: Privacy boundary for selected public notes.
 tags:
   - notes

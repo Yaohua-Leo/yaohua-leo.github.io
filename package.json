@@ -1,11 +1,12 @@
 {
   "name": "leo-library",
-  "description": "Leo's Library, a Quartz-powered personal knowledge site",
+  "description": "Yaohua (Leo)'s academic homepage and public research notebook",
   "private": true,
   "version": "5.0.0",
   "type": "module",
-  "author": "Leo",
+  "author": "Yaohua (Leo)",
   "license": "MIT",
+  "packageManager": "npm@11.9.0",
   "homepage": "https://yaohua-leo.github.io",
   "repository": {
     "type": "git",
@@ -13,15 +14,23 @@
   },
   "scripts": {
     "quartz": "./quartz/bootstrap-cli.mjs",
-    "docs": "npx quartz build --serve -d docs",
+    "dev": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build --serve",
+    "build": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build",
+    "preview": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build --serve",
+    "verify": "npm run prepare:site && npm run content:check && npm run check && npm run test",
+    "content:check": "node ./scripts/check-content.mjs",
+    "new:note": "node ./scripts/new-note.mjs",
+    "docs": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build --serve -d docs",
     "check": "tsc --noEmit && npx prettier . --check",
     "format": "npx prettier . --write",
-    "test": "tsx --test",
+    "test": "node --import tsx --test",
     "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1",
-    "install-plugins": "npx tsx ./quartz/plugins/loader/install-plugins.ts",
+    "install-plugins": "node ./quartz/bootstrap-cli.mjs plugin install",
     "patch-plugins": "node ./scripts/patch-quartz-graph-plugin.mjs",
     "maoxuan:content-index": "node ./scripts/publish-maoxuan-resources.mjs --content-index",
-    "prebuild": "npm run install-plugins"
+    "prepare:plugins": "npm run install-plugins",
+    "prepare:content": "npm run maoxuan:content-index",
+    "prepare:site": "npm run prepare:plugins && npm run prepare:content"
   },
   "engines": {
     "npm": ">=10.9.2",

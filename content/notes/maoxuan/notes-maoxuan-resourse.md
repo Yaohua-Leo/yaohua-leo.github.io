@@ -1,13 +1,17 @@
 ---
-title: notes-maoxuan-resourse
+title: Maoxuan Resources (Legacy Index)
+description: Legacy direct index for the Mao Selected Works source-text archive.
 date: 2026-06-19
 publish: true
+unlisted: true
+comments: false
+lang: zh-CN
+type: archive-index
+status: legacy
 tags:
   - maoxuan
   - resource
 ---
-
-# notes-maoxuan-resourse
 
 This page indexes the Maoxuan reading resources copied from [weiyinfu/MaoZeDongAnthology](https://github.com/weiyinfu/MaoZeDongAnthology) at commit `f23ff5c48d976561f888c6ce8c594725d5670e38`.
 
