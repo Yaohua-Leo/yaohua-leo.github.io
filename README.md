@@ -1,26 +1,48 @@
-# Leo's Library
+# Yaohua (Leo)
 
-Quartz 5 personal knowledge site for <https://yaohua-leo.github.io/>.
+Academic homepage and public research notebook for [Yaohua (Leo)](https://yaohua-leo.github.io/), built with Quartz 5.
+
+The site focuses on Jordan algebras, Quillen (co)homology, formalization in mathlib, and AI-assisted mathematics. Selected reading archives live alongside the research material without entering the site's primary discovery surfaces.
+
+## Content Structure
+
+- `content/research/` — research directions and explanatory overviews
+- `content/projects/` — active research, formalization, and workflow projects
+- `content/writing/` — self-contained essays and expository notes
+- `content/reading/` — reading collections and curated entry points
+- `content/notes/maoxuan/` — Chinese-language concept notes and a source-text archive
+
+Raw source-text pages under `content/notes/maoxuan/resource/` remain available by direct URL. The local `site-content-policy` plugin excludes them from Explorer, search, graph, RSS, sitemap, folder listings, comments, and indexing metadata so they do not dominate the academic homepage.
 
 ## Local Commands
 
 ```powershell
 npm ci
-npx quartz build
-npx quartz build --serve
+npm run dev
+npm run verify
+npm run build
 ```
+
+Create a structured draft with:
+
+```powershell
+npm run new:note -- --title "My note" --type research-note --area jordan-algebra
+```
+
+Available note types are `research-note`, `exposition`, `project`, and `reading-note`. New notes default to `publish: false` and `status: seed`.
 
 ## Publishing Rules
 
-This repository is public. Only add content that is safe to publish.
+This repository is public. A file is not private merely because Quartz does not publish it.
 
-- Markdown pages must include `publish: true` in frontmatter before Quartz includes them in the site.
-- Keep private diaries, private PDFs, drafts, and unreviewed exports out of this repository.
-- Put public PDFs under `content/assets/pdf/` and link them from a published Markdown page.
+- Keep private diaries, sensitive PDFs, credentials, and unreviewed research outside this repository.
+- A Markdown page must include an explicit `publish: true` before Quartz includes it.
+- Use `status` to describe maturity and `featured` to control editorial prominence; do not overload `publish` for those purposes.
+- Put public PDFs under `content/assets/pdf/` and link them from a published page.
+- Run `npm run verify` before opening a pull request.
 
-## Comments
+## Validation and Deployment
 
-Comments use Giscus through GitHub Discussions in `Yaohua-Leo/yaohua-leo.github.io`.
-The repo and category IDs are configured in `quartz.config.yaml`.
+Pull requests run content validation, type checking, formatting, tests, and a complete Quartz build. Pushes to `main` repeat those checks before deploying to GitHub Pages.
 
-The Giscus GitHub App must be installed for the repository before comments can render and write discussions.
+Comments use Giscus through GitHub Discussions in `Yaohua-Leo/yaohua-leo.github.io`. They are disabled on the homepage, folder indexes, tags, and archived source-text pages.

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: Leo's Library
-  pageTitleSuffix: " - notes, diaries, and working papers"
+  pageTitle: Yaohua (Leo)
+  pageTitleSuffix: " — mathematics and AI-assisted research"
   enableSPA: true
   enablePopovers: true
   analytics: null
@@ -135,7 +135,7 @@ plugins:
       position: left
       priority: 50
   - source: github:quartz-community/graph
-    enabled: true
+    enabled: false
     layout:
       position: right
       priority: 10
@@ -214,12 +214,14 @@ plugins:
     layout:
       position: afterBody
       priority: 10
+      condition: not-index
   - source: github:quartz-community/footer
     enabled: true
     options:
       links:
-        GitHub: https://github.com/Yaohua-Leo/yaohua-leo.github.io
-        Source: https://github.com/jackyzha0/quartz
+        GitHub: https://github.com/Yaohua-Leo
+        Repository: https://github.com/Yaohua-Leo/yaohua-leo.github.io
+        Quartz: https://github.com/jackyzha0/quartz
   - source: github:quartz-community/recent-notes
     enabled: false
   - source: github:quartz-community/spacer
@@ -240,10 +242,14 @@ plugins:
       includeAll: false
       includedProperties:
         - description
+        - type
+        - area
+        - status
+        - updated
         - tags
         - aliases
       excludedProperties: []
-      hidePropertiesView: false
+      hidePropertiesView: true
       delimiters: ---
       language: yaml
     order: 5
@@ -256,8 +262,24 @@ plugins:
     enabled: true
     options: {}
     order: 45
-  - source: github:quartz-community/encrypted-pages
+  - source: ./plugins/site-content-policy
     enabled: true
+    order: 46
+    options:
+      unlistedPrefixes:
+        - notes/maoxuan/resource/
+      listedPaths:
+        - notes/maoxuan/resource/index.md
+      unlistedPaths:
+        - notes/maoxuan/notes-maoxuan-resourse.md
+      commentsDisabledPrefixes:
+        - notes/maoxuan/resource/
+      commentsDisabledPaths:
+        - notes/maoxuan/notes-maoxuan-resourse.md
+      languageByPrefix:
+        notes/maoxuan/: zh-CN
+  - source: github:quartz-community/encrypted-pages
+    enabled: false
     options:
       iterations: 600000
       passwordField: password
@@ -290,11 +312,13 @@ layout:
     folder:
       exclude:
         - reader-mode
+        - comments
       positions:
         right: []
     tag:
       exclude:
         - reader-mode
+        - comments
       positions:
         right: []
     canvas: {}

@@ -41,6 +41,7 @@ async function runEmitter(
     }
   } catch (err) {
     trace(`Failed to emit from plugin \`${emitter.name}\``, err as Error)
+    throw err
   }
   return count
 }
@@ -78,21 +79,24 @@ export async function emitContent(ctx: BuildCtx, content: ProcessedContent[]) {
   const otherEmitters = cfg.plugins.emitters.filter(
     (e) => e.name !== "PageTypeDispatcher" && e.name !== "ComponentResources",
   )
-  let emitErrors = 0
+  const failedEmitters: string[] = []
   const counts = await Promise.all(
     otherEmitters.map((emitter) =>
       runEmitter(emitter, ctx, contentWithVirtual, staticResources, log).catch((err) => {
-        emitErrors++
-        console.error(`Emitter "${emitter.name}" failed:`, err.message ?? err)
+        failedEmitters.push(emitter.name)
+        console.error(
+          `Emitter "${emitter.name}" failed:`,
+          err instanceof Error ? err.message : String(err),
+        )
         return 0
       }),
     ),
   )
   emittedFiles += counts.reduce((sum, c) => sum + c, 0)
 
-  if (emitErrors > 0) {
-    console.warn(
-      `\nBuild completed with ${emitErrors} emitter failure(s). Output may be incomplete.`,
+  if (failedEmitters.length > 0) {
+    throw new Error(
+      `Build failed because ${failedEmitters.length} emitter(s) failed: ${failedEmitters.join(", ")}`,
     )
   }
 

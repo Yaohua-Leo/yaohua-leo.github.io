@@ -1,13 +1,16 @@
 ---
 title: Maoxuan Resources
+description: Source-text references associated with the Mao Selected Works reading archive.
 date: 2026-06-19
 publish: true
+comments: false
+lang: zh-CN
+type: archive-index
+status: archive
 tags:
   - maoxuan
   - resource
 ---
-
-# Maoxuan Resources
 
 This folder publishes the Markdown reading resources copied from [weiyinfu/MaoZeDongAnthology](https://github.com/weiyinfu/MaoZeDongAnthology) at commit `f23ff5c48d976561f888c6ce8c594725d5670e38`.
 

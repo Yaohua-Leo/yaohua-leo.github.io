@@ -1,6 +1,8 @@
 ---
 title: Graph Thinking
-publish: true
+publish: false
+unlisted: true
+lang: en
 description: A starter linked note for the public graph.
 tags:
   - notes

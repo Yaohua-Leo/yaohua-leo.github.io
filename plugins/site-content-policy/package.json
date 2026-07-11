@@ -1,0 +1,22 @@
+{
+  "name": "@leo/site-content-policy",
+  "version": "1.0.0",
+  "description": "Path-based discovery and comment policy for archived site content",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "quartz": {
+    "name": "site-content-policy",
+    "displayName": "Site Content Policy",
+    "description": "Keeps raw archives directly accessible without letting them dominate discovery surfaces.",
+    "category": "transformer",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 46,
+    "defaultEnabled": true,
+    "defaultOptions": {}
+  }
+}
