@@ -278,6 +278,13 @@ plugins:
         - notes/maoxuan/notes-maoxuan-resourse.md
       languageByPrefix:
         notes/maoxuan/: zh-CN
+  - source: ./plugins/graph-index
+    enabled: true
+    order: 49
+    options:
+      outputPath: static/graphIndex.json
+      includeUnlistedPrefixes:
+        - notes/maoxuan/resource/
   - source: github:quartz-community/encrypted-pages
     enabled: false
     options:

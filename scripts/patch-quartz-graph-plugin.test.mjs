@@ -41,19 +41,58 @@ describe("patchQuartzGraphPlugin", () => {
       if (slug.startsWith("/")) slug = slug.slice(1);
     }
     return slug;
-  }`
+  }
+
+  function loadScript(src) {
+    return src;
+  }
+
+        var dataRaw = await fetchData;`
 
     const patched = patchGraphSource(original)
     assert.match(patched, /decodeURIComponent/)
+    assert.match(patched, /static\/graphIndex\.json/)
+    assert.match(patched, /await getGraphData\(\)/)
+    assert.doesNotMatch(patched, /await fetchData/)
     assert.strictEqual(patchGraphSource(patched), patched)
+  })
+
+  test("adds the graph index loader to source that already has the slug fix", () => {
+    const slugPatched = `  function decodeGraphSlugComponent(value) {
+    return value;
+  }
+
+  function loadScript(src) {
+    return src;
+  }
+
+        var dataRaw = await fetchData;`
+
+    const patched = patchGraphSource(slugPatched)
+    assert.match(patched, /function getGraphData\(\)/)
+    assert.match(patched, /await getGraphData\(\)/)
+    assert.doesNotMatch(patched, /await fetchData/)
   })
 
   test("patches compiled graph script once", () => {
     const original =
-      'before function u(){var a=we(),o=Nu();return o&&a.startsWith(o.replace(/^\\\\//,""))&&(a=a.slice(o.replace(/^\\\\//,"").length),a.startsWith("/")&&(a=a.slice(1))),a} after'
+      'before (function(){function u(){var a=we(),o=Nu();return o&&a.startsWith(o.replace(/^\\\\//,""))&&(a=a.slice(o.replace(/^\\\\//,"").length),a.startsWith("/")&&(a=a.slice(1))),a}async function D(){var Ku=await fetchData;}})(); after'
 
     const patched = patchGraphDist(original)
     assert.match(patched, /decodeURIComponent/)
+    assert.match(patched, /static\/graphIndex\.json/)
+    assert.match(patched, /await __leoGetGraphData\(\)/)
+    assert.doesNotMatch(patched, /await fetchData/)
     assert.strictEqual(patchGraphDist(patched), patched)
+  })
+
+  test("adds the graph index loader to compiled output that already has the slug fix", () => {
+    const slugPatched =
+      'before (function(){function u(){function d(w){try{return decodeURIComponent(w)}catch{return w}}return d("slug")}async function D(){var Ku=await fetchData;}})(); after'
+
+    const patched = patchGraphDist(slugPatched)
+    assert.match(patched, /__leoGetGraphData/)
+    assert.match(patched, /await __leoGetGraphData\(\)/)
+    assert.doesNotMatch(patched, /await fetchData/)
   })
 })

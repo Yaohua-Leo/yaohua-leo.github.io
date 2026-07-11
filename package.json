@@ -15,9 +15,10 @@
   "scripts": {
     "quartz": "./quartz/bootstrap-cli.mjs",
     "dev": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build --serve",
-    "build": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build",
+    "build": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build && npm run build:check",
     "preview": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build --serve",
     "verify": "npm run prepare:site && npm run content:check && npm run check && npm run test",
+    "build:check": "node ./scripts/check-build-output.mjs",
     "content:check": "node ./scripts/check-content.mjs",
     "new:note": "node ./scripts/new-note.mjs",
     "docs": "npm run prepare:site && node ./quartz/bootstrap-cli.mjs build --serve -d docs",
