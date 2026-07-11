@@ -28,7 +28,7 @@
     "install-plugins": "node ./quartz/bootstrap-cli.mjs plugin install",
     "patch-plugins": "node ./scripts/patch-quartz-graph-plugin.mjs",
     "maoxuan:content-index": "node ./scripts/publish-maoxuan-resources.mjs --content-index",
-    "prepare:plugins": "npm run install-plugins",
+    "prepare:plugins": "npm run install-plugins && npm run patch-plugins",
     "prepare:content": "npm run maoxuan:content-index",
     "prepare:site": "npm run prepare:plugins && npm run prepare:content"
   },
