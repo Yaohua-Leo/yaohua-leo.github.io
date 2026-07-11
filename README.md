@@ -12,7 +12,7 @@ The site focuses on Jordan algebras, Quillen (co)homology, formalization in math
 - `content/reading/` — reading collections and curated entry points
 - `content/notes/maoxuan/` — Chinese-language concept notes and a source-text archive
 
-Raw source-text pages under `content/notes/maoxuan/resource/` remain available by direct URL. The local `site-content-policy` plugin excludes them from Explorer, search, graph, RSS, sitemap, folder listings, comments, and indexing metadata so they do not dominate the academic homepage.
+Raw source-text pages under `content/notes/maoxuan/resource/` remain available by direct URL. The local content policy excludes them from Explorer, search, RSS, sitemap, folder listings, comments, and indexing metadata so they do not dominate the academic homepage. A separate metadata-only graph index preserves their link relationships without exposing their text to search.
 
 ## Local Commands
 

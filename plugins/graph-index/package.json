@@ -1,0 +1,25 @@
+{
+  "name": "@leo/graph-index",
+  "version": "1.0.0",
+  "description": "A metadata-only Quartz graph index with explicit unlisted-page inclusion rules",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "quartz": {
+    "name": "graph-index",
+    "displayName": "Graph Index",
+    "description": "Emits graph metadata separately from the searchable content index.",
+    "category": "emitter",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 49,
+    "defaultEnabled": true,
+    "defaultOptions": {
+      "outputPath": "static/graphIndex.json",
+      "includeUnlistedPrefixes": []
+    }
+  }
+}
