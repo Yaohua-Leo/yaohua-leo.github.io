@@ -26,7 +26,7 @@ configuration:
       lightMode:
         light: "#fbfaf6"
         lightgray: "#e8e1d6"
-        gray: "#a99f91"
+        gray: "#8f8578"
         darkgray: "#4c4a43"
         dark: "#1f201c"
         secondary: "#2f6f6d"
@@ -36,7 +36,7 @@ configuration:
       darkMode:
         light: "#151711"
         lightgray: "#32362c"
-        gray: "#74796c"
+        gray: "#8a9080"
         darkgray: "#dad7ca"
         dark: "#f5f1e8"
         secondary: "#89b9af"
@@ -103,7 +103,10 @@ plugins:
     enabled: false
     order: 92
   - source: github:quartz-community/fonts
-    enabled: true
+    # Disabled: with no options it injects Schibsted Grotesk / Source Sans Pro
+    # defaults that override theme.typography (Fraunces / Source Serif 4).
+    # Font loading lives in Head.tsx; font stacks live in styles/custom.scss.
+    enabled: false
   - source: github:quartz-community/remove-draft
     enabled: true
   - source: github:quartz-community/explicit-publish
@@ -208,8 +211,8 @@ plugins:
         reactionsEnabled: true
         inputPosition: bottom
         themeUrl: https://giscus.app/themes
-        lightTheme: light
-        darkTheme: dark
+        lightTheme: gruvbox_light
+        darkTheme: gruvbox_dark
         lang: en
     layout:
       position: afterBody
