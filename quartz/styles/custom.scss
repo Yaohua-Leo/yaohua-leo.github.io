@@ -1,5 +1,317 @@
 @use "./variables.scss" as *;
 
+/* ==========================================================================
+   Fonts — final font stacks (unlayered, wins over any @layer rule).
+   Latin faces load via Head.tsx (Google Fonts); Noto Serif SC covers CJK.
+   ========================================================================== */
+
+:root {
+  --titleFont: "Fraunces", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --headerFont: "Fraunces", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --bodyFont:
+    "Source Serif 4", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", Georgia, serif;
+  --codeFont: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Faint paper grain over the base color — data-uri, zero requests. */
+body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html {
+  scrollbar-color: var(--lightgray) transparent;
+  scrollbar-width: thin;
+}
+
+/* ==========================================================================
+   Article pages — reading measure, typography, ornaments.
+   Homepage (data-slug="index") keeps its own custom layout.
+   ========================================================================== */
+
+body:not([data-slug="index"]) .center {
+  & > .page-header,
+  & > article,
+  & > hr,
+  & > .page-footer {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 46rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  & > article {
+    font-size: 1.0625rem;
+
+    p,
+    li,
+    tbody {
+      line-height: 1.85;
+    }
+
+    p {
+      margin: 1.1rem 0;
+    }
+
+    li::marker {
+      color: var(--gray);
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 2.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      margin-top: 2.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    h3 {
+      font-size: 1.18rem;
+      letter-spacing: 0.02em;
+    }
+  }
+}
+
+/* Article title — chapter-page feel with a double rule underneath. */
+h1.article-title {
+  font-size: 2.25rem;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  margin: 1.6rem 0 0.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 4px double var(--lightgray);
+}
+
+.content-meta {
+  font-size: 0.85rem;
+  color: var(--gray);
+  letter-spacing: 0.04em;
+}
+
+/* Horizontal rules become a centered fleuron. */
+article hr,
+.center > hr {
+  height: auto;
+  margin: 2.5rem auto;
+  background: none;
+  border: none;
+  text-align: center;
+  line-height: 1;
+
+  &::after {
+    content: "❦";
+    font-size: 1.1rem;
+    color: var(--gray);
+    opacity: 0.75;
+  }
+}
+
+/* Plain quotes get a warm paper wash (callouts are blockquotes too — skip). */
+article blockquote:not(.callout) {
+  background: color-mix(in srgb, var(--light) 94%, var(--secondary) 6%);
+  border-left: 3px solid var(--secondary);
+  border-radius: 0 0.35rem 0.35rem 0;
+  padding: 0.7rem 1.2rem;
+}
+
+/* Book-style tables: horizontal rules only, headers in the display face. */
+article th {
+  font-family: var(--headerFont);
+  font-weight: 600;
+  border-bottom: 2px solid color-mix(in srgb, var(--darkgray) 55%, transparent);
+}
+
+/* Code surfaces settle into the paper tone. */
+pre {
+  background-color: color-mix(in srgb, var(--light) 72%, var(--lightgray) 28%);
+}
+
+code {
+  background: color-mix(in srgb, var(--lightgray) 55%, var(--light) 45%);
+}
+
+/* Drop cap for blog essays (Latin content only lives under blog/). */
+body[data-slug^="blog/"] .center > article .markdown-rendered > p:first-child::first-letter {
+  float: left;
+  font-family: var(--titleFont);
+  font-size: 3.3em;
+  font-weight: 600;
+  line-height: 0.82;
+  padding: 0.06em 0.12em 0 0;
+  color: var(--secondary);
+}
+
+/* ==========================================================================
+   Callouts — warm ink palette replacing the stock neon blues.
+   Same --color/--border/--bg contract as quartz-base callouts.scss.
+   ========================================================================== */
+
+.callout {
+  border-radius: 0.4rem;
+
+  &[data-callout] {
+    --color: #2f6f6d;
+    --border: #2f6f6d44;
+    --bg: #2f6f6d10;
+  }
+
+  &[data-callout="abstract"],
+  &[data-callout="info"],
+  &[data-callout="todo"] {
+    --color: #2f6f6d;
+    --border: #2f6f6d44;
+    --bg: #2f6f6d10;
+  }
+
+  &[data-callout="tip"],
+  &[data-callout="success"] {
+    --color: #5a7d54;
+    --border: #5a7d5444;
+    --bg: #5a7d5410;
+  }
+
+  &[data-callout="question"],
+  &[data-callout="warning"] {
+    --color: #a2762a;
+    --border: #a2762a44;
+    --bg: #a2762a10;
+  }
+
+  &[data-callout="failure"],
+  &[data-callout="danger"],
+  &[data-callout="bug"] {
+    --color: #a2473b;
+    --border: #a2473b44;
+    --bg: #a2473b10;
+  }
+
+  &[data-callout="example"] {
+    --color: #7d5a7a;
+    --border: #7d5a7a44;
+    --bg: #7d5a7a10;
+  }
+
+  &[data-callout="quote"] {
+    --color: #6b5d4f;
+    --border: var(--lightgray);
+    --bg: color-mix(in srgb, var(--light) 92%, var(--gray) 8%);
+  }
+}
+
+:root[saved-theme="dark"] .callout {
+  &[data-callout] {
+    --color: #8fbcb5;
+    --border: #8fbcb544;
+    --bg: #8fbcb512;
+  }
+
+  &[data-callout="abstract"],
+  &[data-callout="info"],
+  &[data-callout="todo"] {
+    --color: #8fbcb5;
+    --border: #8fbcb544;
+    --bg: #8fbcb512;
+  }
+
+  &[data-callout="tip"],
+  &[data-callout="success"] {
+    --color: #a3c294;
+    --border: #a3c29444;
+    --bg: #a3c29412;
+  }
+
+  &[data-callout="question"],
+  &[data-callout="warning"] {
+    --color: #d4a95f;
+    --border: #d4a95f44;
+    --bg: #d4a95f12;
+  }
+
+  &[data-callout="failure"],
+  &[data-callout="danger"],
+  &[data-callout="bug"] {
+    --color: #dc806f;
+    --border: #dc806f44;
+    --bg: #dc806f12;
+  }
+
+  &[data-callout="example"] {
+    --color: #b795b4;
+    --border: #b795b444;
+    --bg: #b795b412;
+  }
+
+  &[data-callout="quote"] {
+    --color: #a89a89;
+    --border: var(--lightgray);
+    --bg: color-mix(in srgb, var(--light) 88%, var(--gray) 12%);
+  }
+}
+
+/* ==========================================================================
+   Site chrome — breadcrumbs, sidebar module titles, metadata card, popover.
+   ========================================================================== */
+
+.breadcrumb-container {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+
+  .breadcrumb-element {
+    a {
+      color: var(--gray);
+      font-weight: 400;
+
+      &:hover {
+        color: var(--tertiary);
+      }
+    }
+
+    p {
+      color: var(--gray);
+      opacity: 0.55;
+      font-size: 0.72rem;
+    }
+  }
+}
+
+/* TOC / Graph / Backlinks / Explorer headers as quiet small caps. */
+button.toc-header h3,
+.graph > h3,
+.backlinks > h3,
+.explorer button h2 {
+  font-family: var(--bodyFont);
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gray);
+}
+
+/* Frontmatter panel as a muted index card. */
+.note-properties {
+  background: color-mix(in srgb, var(--light) 92%, var(--lightgray) 8%);
+  border-radius: 0.4rem;
+
+  .note-properties-header {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+  }
+}
+
+.popover > .popover-inner {
+  border-radius: 0.5rem;
+  box-shadow:
+    0 12px 32px rgba(31, 26, 18, 0.16),
+    0 2px 8px rgba(31, 26, 18, 0.08);
+}
+
 .leo-home {
   display: flex;
   flex-direction: column;

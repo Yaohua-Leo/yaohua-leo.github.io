@@ -61,6 +61,12 @@ export default (() => {
             {cfg.theme.typography.title && (
               <link rel="stylesheet" href={googleFontSubsetHref(cfg.theme, cfg.pageTitle)} />
             )}
+            {/* CJK serif for the Chinese notes; Google Fonts serves it as
+                unicode-range subsets so only used glyph ranges download. */}
+            <link
+              rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap"
+            />
           </>
         )}
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
